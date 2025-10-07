@@ -20,7 +20,6 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         val startValue = 7
-
         viewModel = ViewModelProvider(
             this,
             CounterViewModel.getFactory(startValue)
@@ -29,11 +28,16 @@ class MainActivity : AppCompatActivity() {
         counter = findViewById(R.id.counter)
         button = findViewById(R.id.button)
 
-        counter.text = viewModel.getCounter()
+        viewModel.observeCounter().observe(this) {
+            counter.text = it.toString()
+        }
+
+        viewModel.observeIsIncrementEnabled().observe(this) {
+            button.isEnabled = it
+        }
 
         button.setOnClickListener {
             viewModel.incrementCounter()
-            counter.text = viewModel.getCounter()
         }
     }
 }
