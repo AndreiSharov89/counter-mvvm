@@ -4,6 +4,7 @@ import CounterViewModel
 import android.os.Bundle
 import android.widget.Button
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import com.example.counter_mvvm.R
@@ -28,12 +29,13 @@ class MainActivity : AppCompatActivity() {
         counter = findViewById(R.id.counter)
         button = findViewById(R.id.button)
 
-        viewModel.observeCounter().observe(this) {
-            counter.text = it.toString()
+        viewModel.observeCounterState().observe(this) {
+            counter.text = it.counterValue.toString()
+            button.isEnabled = it.isIncrementEnabled
         }
 
-        viewModel.observeIsIncrementEnabled().observe(this) {
-            button.isEnabled = it
+        viewModel.observeShowMessage().observe(this) {
+            Toast.makeText(this, it, Toast.LENGTH_LONG).show()
         }
 
         button.setOnClickListener {

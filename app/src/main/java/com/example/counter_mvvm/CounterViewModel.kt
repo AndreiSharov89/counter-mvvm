@@ -4,20 +4,24 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
+import com.example.counter_mvvm.CounterState
+import com.example.counter_mvvm.SingleLiveEvent
 
 
 class CounterViewModel(private val startValue: Int) : ViewModel() {
 
-    private val counterLiveData = MutableLiveData<Int>(startValue)
-    fun observeCounter(): LiveData<Int> = counterLiveData
-    private val isIncrementEnabledLiveData = MutableLiveData<Boolean>(true)
-    fun observeIsIncrementEnabled(): LiveData<Boolean> = isIncrementEnabledLiveData
+    private val counterStateLiveData = MutableLiveData<CounterState>(CounterState(startValue, true))
+    fun observeCounterState(): LiveData<CounterState> = counterStateLiveData
+    private val showMessageLiveData = SingleLiveEvent<String>()
+    fun observeShowMessage(): LiveData<String> = showMessageLiveData
 
     fun incrementCounter() {
-        counterLiveData.postValue(counterLiveData.value?.plus(1))
-        val value = counterLiveData.value ?: startValue
-        val enabled = value <= 15
-        isIncrementEnabledLiveData.postValue(enabled)
+        val value = counterStateLiveData.value?.counterValue?.plus(1) ?: startValue
+        val enabled = value < 15
+        counterStateLiveData.postValue(CounterState(value, enabled))
+        if (value == 10) {
+            showMessageLiveData.postValue("Осталось 5")
+        }
     }
 
     companion object {
