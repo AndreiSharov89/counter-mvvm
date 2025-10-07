@@ -22,6 +22,11 @@ class CounterViewModel(
         counterValue++
     }
 
+    override fun onCleared() {
+        super.onCleared()
+        counterValue = 0
+    }
+
     companion object {
         fun getFactory(value: Int): ViewModelProvider.Factory = viewModelFactory {
             initializer {
